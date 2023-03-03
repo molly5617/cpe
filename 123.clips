@@ -1,0 +1,58 @@
+(deftemplate car (slot type))
+(deftemplate car-object (slot situation))
+
+(defrule car-type-brake-trouble-1
+(car-object(situation noise-when-brake))
+=>
+(assert (car(type brake-trouble))))
+
+(defrule car-type-brake-trouble-2
+(car-object(situation noise-from-tire))
+=>
+(assert (car(type brake-trouble))))
+
+(defrule deal-with-type-brake-trouble
+(car(type brake-trouble))
+=>
+(printout t "check brake pedal and oil" crlf))
+
+(defrule car-type-water-tank-trouble-1
+(car-object(situation water-thermometer-H))
+=>
+(assert (car(type water-tank-trouble))))
+
+(defrule car-type-water-tank-trouble-2
+(car-object(situation water-leak))
+=>
+(assert (car(type water-tank-trouble))))
+
+(defrule car-type-engine-belt-loose
+(car-object(situation noise-from-engine-room))
+=>
+(assert (car(type engine-belt-loose))))
+
+(defrule car-type-car-battery-no-power
+(car-object(situation engine-cannot-catch))
+=>
+(assert (car(type battery-no-power))))
+
+(defrule deal-with-type-water-tank-trouble
+(car(type water-tank-trouble))
+=>
+(printout t "repair the water tank or add water" crlf))
+
+(defrule deal-with-type-engine-belt-loose
+(car(type engine-belt-loose))
+=>
+(printout t "change the engine belt" crlf))
+
+(defrule deal-with-type-car-battery-no-power
+(car(type car-battery-no-power))
+=>
+(printout t "replace or charge a car battery" crlf))
+
+
+
+
+
+
