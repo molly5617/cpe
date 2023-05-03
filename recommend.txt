@@ -1,0 +1,4 @@
+(set (name s1) (members 9 11 7 3 5 1))
+(set (name s2) (members 2 6 5 4 3 7))
+(set (name s1 union s2) (members 5 3 7 2 6 4 9 11 1))
+(set (name s1 intersect s2) (members 5 3 7))

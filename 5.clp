@@ -33,7 +33,7 @@
 (defrule get-message
    (not (message $?))
    =>
-   (printout t "Enter a message (<CR> to end): ")
+   (printout t "Enter a message (<ENTER> to end): ")
    (bind ?input (readline))
    (assert-string (str-cat "(message " ?input ")"))
    (assert (translation)))
@@ -91,3 +91,6 @@
    (retract ?f1 ?f2)
    (printout t "The message is " 
                (str-implode ?translation) crlf))
+
+
+(load "C:\\Users\\user\\OneDrive - 國立彰化師範大學\\桌面\\4.txt")
