@@ -68,7 +68,7 @@
 (printout t crlf "Generation " ?g crlf))
 
 
-(defrule PRINT::cell-print1
+(defrule PRINT::cell-print
 (declare (salience 10))
 (dimensions (rows ?nr) (columns ?nc))
 ?f <- (print-column ?c&:(<= ?c ?nc))
@@ -77,8 +77,20 @@
 =>
 (printout t ?s " ")
 (retract ?f)
-(assert (print-column (+ 1 ?c))))
+(assert (print-column (+ 1 ?c)))
+)
 
+(defrule PRINT::cell-print-blank
+(declare (salience 5))
+(dimensions (rows ?nr) (columns ?nc))
+?f <- (print-row ?c&:(<= ?c ?nr))
+?f2 <- (print-column ?d)
+=>
+(printout t crlf)
+(retract ?f ?f2)
+(assert (print-row (+ 1 ?c)))
+(assert (print-column (+ 1 0)))
+)
 
 (defrule COMPUTE-NEIGHBORS::make-neighbors
 (cell (row ?x) (column ?y) (status *))
@@ -103,10 +115,71 @@
 =>
 (assert (neighbor-sum (row ?x) (column ?y) (value 0))))
 
+(defrule COMPUTE-NEIGHBORS::add-neighbor-sum
+?f<-(neighbor-sum (row ?x) (column ?y) (value ?a))
+?f1<-(neighbor (row ?x) (column ?y) (live-cell $?c))
+=>
+(retract ?f ?f1)
+(assert (neighbor-sum (row ?x) (column ?y) (value (+ 1 ?a))))
+)
 
 (defrule NEXT-GENERATION::continue-life
+    ?a <- (cell (row ?x) (column ?y) (status *))
+    ?b <- (neighbor-sum (row ?x) (column ?y) (value 2|3))
+    =>
+    (retract ?a ?b)
+    (assert (cell (row ?x) (column ?y) (status *))))
+
+(defrule NEXT-GENERATION::dead-life
 ?a <- (cell (row ?x) (column ?y) (status *))
-?b <- (neighbor-sum (row ?x) (column ?y) (value 2|3))
+?b <- (neighbor-sum (row ?x) (column ?y) (value ?c))
+(test (neq ?c 2))
+(test (neq ?c 3))
+=>
+(retract ?a ?b)
+(assert (cell (row ?x) (column ?y) (status -))))
+
+
+(defrule NEXT-GENERATION::re-life
+
+?a <- (cell (row ?x) (column ?y) (status -))
+?b <- (neighbor-sum (row ?x) (column ?y) (value 3))
 =>
 (retract ?a ?b)
 (assert (cell (row ?x) (column ?y) (status *))))
+
+
+
+(defrule NEXT-GENERATION::continue-dead
+?a <- (cell (row ?x) (column ?y) (status -))
+?b <- (neighbor-sum (row ?x) (column ?y) (value ?c))
+(test (neq ?c 3))
+=>
+(retract ?a ?b)
+(assert (cell (row ?x) (column ?y) (status -))))
+
+
+
+(defrule NEXT-GENERATION::continue-dead
+?a <- (cell (row ?x) (column ?y) (status -))
+?b <- (neighbor-sum (row ?x) (column ?y) (value ?c))
+(test (neq ?c 3))
+=>
+(retract ?a ?b)
+(assert (cell (row ?x) (column ?y) (status -))))
+
+
+
+
+(defrule NEXT-GENERATION::delete-sum
+    (declare (salience -5))
+    ?a <- (neighbor-sum (row ?x) (column ?y) (value $?))
+    =>
+    (retract ?a))
+
+
+
+
+
+
+
